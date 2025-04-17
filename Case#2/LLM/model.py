@@ -2,14 +2,28 @@ from openai import OpenAI
 from dotenv import load_dotenv
 import os
 
+# Load file .env
+load_dotenv()
+
+# Initialize the OpenAI client with base URL and API key from environment variables
 client = OpenAI(
-  base_url="https://openrouter.ai/api/v1",
-  api_key= os.getenv('SECRET_KEY'),
+    base_url="https://openrouter.ai/api/v1",
+    api_key=os.getenv('SECRET_KEY'),
 )
 
-def humanize(question, answer, distance):
+# Function to generate a humanized response based on the question, answer, and distance
+def humanize(question: str, answer: list[str], distance: list[int]) -> str:
+    """
+    Parameters:
+    - question: The user's question as a string.
+    - answer: A list of strings containing two possible answers.
+    - distance: A list of integers representing distances for relevance.
 
+    Returns:
+    - A string containing the generated response.
+    """
     if min(distance) <= 450:
+        # Generate a response when the minimum distance is less than or equal to 450
         completion = client.chat.completions.create(
             extra_headers={
                 # Optional: Site title for rankings on openrouter.ai.
@@ -39,9 +53,10 @@ def humanize(question, answer, distance):
                 }
             ],
             max_tokens=400,
-            temperature=0.5  # lebih rendah untuk menghindari halusinasi
+            temperature=0.5  # Lower temperature to reduce hallucination
         )
     else:
+        # Generate a response when the minimum distance is greater than 450
         completion = client.chat.completions.create(
             extra_headers={
                 # Optional: Site title for rankings on openrouter.ai.
@@ -74,7 +89,16 @@ def humanize(question, answer, distance):
 
     return completion.choices[0].message.content
 
-def define_paragraph(question, answer):
+# Function to define a single paragraph response based on a question and answer
+def define_paragraph(question: str, answer: str) -> str:
+    """
+    Parameters:
+    - question: The user's question as a string.
+    - answer: A string containing the answer.
+
+    Returns:
+    - A string containing a single sentence combining the question and answer.
+    """
     completion = client.chat.completions.create(
         model="google/gemini-pro",
         messages=[
@@ -97,10 +121,3 @@ def define_paragraph(question, answer):
         temperature=0.7
     )
     return completion.choices[0].message.content
-
-def embbed_online(text):
-    completion = client.embeddings.create(
-        model="text-embedding-3-large",
-        input=text
-    )
-    return completion.data[0].embedding
