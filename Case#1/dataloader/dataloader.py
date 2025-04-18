@@ -1,11 +1,8 @@
 import torch
 from torch.utils.data import Dataset, DataLoader
 from torch.nn.utils.rnn import pad_sequence
-from torchtext.vocab import build_vocab_from_iterator
-from nltk.tokenize import word_tokenize
 import nltk
 from typing import List, Tuple, Callable
-from util import yield_tokens, nltk_tokenizer, vocabularize
 
 # === Dataset Class ===
 class TextDataset(Dataset):

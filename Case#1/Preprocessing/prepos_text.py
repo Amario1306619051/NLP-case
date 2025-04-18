@@ -5,6 +5,7 @@ import nltk
 from nltk.corpus import stopwords
 from Sastrawi.Stemmer.StemmerFactory import StemmerFactory
 from util import yield_tokens, nltk_tokenizer, vocabularize
+from tqdm import tqdm
 
 factory = StemmerFactory()
 stemmer = factory.create_stemmer()
@@ -107,7 +108,8 @@ def preprocess_dataframe(df,
                          apply_stemming=True,
                          URL=True,
                          numbers=False,
-                         symbols=False):
+                         symbols=False,
+                         save_csv=False):
     """
     Preprocess a DataFrame, CSV file path, or list of text with various preprocessing options.
     
@@ -119,6 +121,7 @@ def preprocess_dataframe(df,
         URL (bool): Whether to remove URLs.
         numbers (bool): Whether to remove numbers.
         symbols (bool): Whether to remove symbols.
+        save_csv (bool): Wheter to save preprocess results.
 
     Returns:
         pd.DataFrame: A new DataFrame with an additional column 'processed_text'.
@@ -135,7 +138,7 @@ def preprocess_dataframe(df,
     elif not isinstance(df, pd.DataFrame):
         raise ValueError("Input must be a DataFrame, CSV file path, or a list of strings.")
     
-    for text in df["Text Tweet"]:
+    for text in tqdm(df["Text Tweet"], desc="Processing texts"):
         # 1. Convert text to lowercase
         text = lowercase_text(text)
         # 2. Optional: Clean special characters
@@ -159,5 +162,9 @@ def preprocess_dataframe(df,
     # Add a new column to the DataFrame
     df = df.copy()
     df["processed_text"] = processed_texts
+
+    #save CSV if true
+    if save_csv:
+        df.to_csv('preproces_result.csv')
 
     return df
