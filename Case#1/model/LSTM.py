@@ -25,9 +25,9 @@ class LSTMModel3(SimpleLSTMModel2):
             num_layers (int): Ignored (fixed to 4 here).
             dropout (float): Ignored (fixed to 0.5 here).
         """
-        self.embedding = nn.Embedding(vocab_size, 512)
-        self.lstm = nn.LSTM(512, 128, num_layers=4, batch_first=True, dropout=0.5)
-        self.fc = nn.Linear(128, output_size)
+        self.embedding = nn.Embedding(vocab_size, embed_size)
+        self.lstm = nn.LSTM(embed_size, hidden_size, num_layers=num_layers, batch_first=True, dropout=dropout)
+        self.fc = nn.Linear(hidden_size, output_size)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """
@@ -66,11 +66,11 @@ class BidirectionalLSTMModel(SimpleLSTMModel2):
             num_layers (int): Ignored (fixed to 4 here).
             dropout (float): Ignored (fixed to 0.5 here).
         """
-        self.embedding = nn.Embedding(vocab_size, 512)
+        self.embedding = nn.Embedding(vocab_size, embed_size)
         self.lstm = nn.LSTM(
-            512, 128, num_layers=4, batch_first=True, dropout=0.5, bidirectional=True
+            embed_size, hidden_size, num_layers=4, batch_first=True, dropout=0.5, bidirectional=True
         )
-        self.fc = nn.Linear(128, output_size)  # times 2 for bidirectional output
+        self.fc = nn.Linear(hidden_size, output_size)  # times 2 for bidirectional output
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """

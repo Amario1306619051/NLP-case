@@ -1,12 +1,13 @@
 import streamlit as st
 from db_process.database import query_database
 from LLM.model import humanize
+import os
 
 def get_answer(question: str):
     # Query the database
     result = query_database(
-        db_path='database',  # Path to the database
-        collection_name='TESTLLMMLarge1',  # Collection name in the database
+        db_path=os.getenv('DB_PATH'),  # Path to the database
+        collection_name=os.getenv('COLLECTION'),  # Collection name in the database
         query=question  # User's question
     )
     # Extract the list of answers and the closest distance

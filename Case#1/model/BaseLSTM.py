@@ -28,7 +28,9 @@ class SimpleLSTMModel2(nn.Module):
         Args:
             weights (str, optional): Path to saved model checkpoint. Defaults to None.
         """
+        #
         super(SimpleLSTMModel2, self).__init__()
+        # Initialize variables
         self.weights = weights
         self.embedding = None
         self.lstm = None
@@ -39,10 +41,9 @@ class SimpleLSTMModel2(nn.Module):
         self.tokenizer_name = None
         self.tokenizer = None
 
-        # Read weights file and resume variables
+        # Read weights file and overide variables
         if self.weights is not None:
             checkpoint = torch.load(self.weights, map_location=torch.device('cpu'))
-            print(checkpoint.keys())
             # Build model with parameters from the checkpoint
             self._build_model(
                 vocab_size=len(checkpoint['vocab']),
@@ -58,7 +59,6 @@ class SimpleLSTMModel2(nn.Module):
             self.vocab = checkpoint['vocab']
             self.num_class = checkpoint['num_class']
             self.classes_names = checkpoint['classes_names']
-            print(self.classes_names)
             self.tokenizer_name = checkpoint['tokenizer']
             self.tokenizer = checkpoint['tokenizer']
 
@@ -96,6 +96,8 @@ class SimpleLSTMModel2(nn.Module):
         self.dropout = training.get("dropout", 0.5)      # Fixed typo
         self.tokenizer_type = training.get("tokenizer", "nltk")
         self.batch_size = training.get("batch_size", 32)
+        self.lr = training.get("leaning_rate", 0.001)
+        self.momentum = training.get("momentum", 0.001)
 
     def _build_dataloader(self):
         """
@@ -180,6 +182,11 @@ class SimpleLSTMModel2(nn.Module):
 
         Returns:
             Tuple[str, float]: Predicted label and its confidence score.
+
+        Steps:
+        1. Preprocessing text
+        2. Tokenization
+        3. Forward Propagation
         """
         assert self.weights is not None, "Weights must be loaded before prediction."
         assert self.vocab is not None, "Vocabulary is not available."
@@ -210,6 +217,12 @@ class SimpleLSTMModel2(nn.Module):
 
         Returns:
             Dict[str, float]: Dictionary containing loss, accuracy, precision, recall, and F1-score.
+
+        Steps :
+        1. Read YAML file
+        2. Build dataloader
+        3. Initialize Parameters
+        4. Validation process (calculate acc, precision, recall, f1 score)
         """
         assert self.weights is not None, "Weights must be loaded before prediction."
         #read yaml file
@@ -260,6 +273,13 @@ class SimpleLSTMModel2(nn.Module):
 
         Args:
             data (str): Path to the YAML configuration file.
+        
+        Steps:
+        1. Read YAML file
+        2. build dataloader
+        3. build model
+        4. training loop (forwardprop, backprop, and matrix calculation)
+        5. validation loop (forwardprop, matrix calculation)
         """
         # Read YAML file
         self._read_yaml_file(yaml_path=data)
@@ -313,11 +333,14 @@ class SimpleLSTMModel2(nn.Module):
             with tqdm(self.train_dataloader, desc=f"Epoch {epoch+1}/{self.num_epochs} [Training]") as train_bar:
                 for _, inputs, labels in train_bar:
                     optimizer.zero_grad()
+                    # Forward propagation
                     outputs = self.forward(inputs)
                     loss = criterion(outputs, labels)
+                    # Backward propagation
                     loss.backward()
                     optimizer.step()
 
+                    # Metrics calculation
                     _, predicted = torch.max(outputs, 1)
                     train_correct += (predicted == labels).sum().item()
                     train_total += labels.size(0)
@@ -331,6 +354,7 @@ class SimpleLSTMModel2(nn.Module):
             train_acc = train_correct / train_total * 100
             train_loss_avg = train_loss / len(self.train_dataloader)
 
+            #Validation lopp
             self.eval()
             val_loss, val_correct, val_total = 0.0, 0, 0
             all_preds, all_targets = [], []
@@ -339,6 +363,7 @@ class SimpleLSTMModel2(nn.Module):
                     for _, inputs, labels in val_bar:
                         outputs = self.forward(inputs)
                         loss = criterion(outputs, labels)
+                        #forward propagation
                         _, predicted = torch.max(outputs, 1)
                         val_correct += (predicted == labels).sum().item()
                         val_total += labels.size(0)
@@ -346,6 +371,7 @@ class SimpleLSTMModel2(nn.Module):
                         all_preds.extend(predicted.tolist())
                         all_targets.extend(labels.tolist())
 
+                        #matrics calculatiaon
                         val_bar.set_postfix({
                             "Loss": f"{val_loss / (val_total / labels.size(0)):.4f}",
                             "Acc": f"{val_correct / val_total * 100:.2f}%"
@@ -354,6 +380,13 @@ class SimpleLSTMModel2(nn.Module):
             val_precision, val_recall, val_f1 = self.calculate_overall_metrics(all_preds, all_targets)
             val_acc = val_correct / val_total * 100
             val_loss_avg = val_loss / len(self.val_dataloader)
+
+            # Calculate overall metrics for the entire validation set
+            overall_precision, overall_recall, overall_f1 = self.calculate_overall_metrics(all_preds, all_targets)
+            print(
+                f"Overall Validation Metrics | "
+                f"Precision: {overall_precision:.4f}, Recall: {overall_recall:.4f}, F1: {overall_f1:.4f}"
+            )
 
             # === CSV LOGGING: Append training results ===
             with open(log_file_path, mode='a', newline='') as log_file:

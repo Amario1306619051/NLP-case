@@ -1,6 +1,6 @@
-dataset : /home/rnd/Downloads/dataset_tweet_sentiment_cellular_service_provider.csv
+dataset: /home/rnd/Downloads/dataset_tweet_sentiment_cellular_service_provider.csv
 split:
-  test_size : 0.2
+  test_size: 0.2
   stratify: false
 preprocess:
   remove_special_char: true
@@ -11,14 +11,15 @@ preprocess:
   sysmbols: true
   save_csv: true
 training_params:
-  optimizer: "adam" # adam or sgd
-  model_path: "DL_models/LSTM"
+  optimizer: "adam"
+  model_path: "DL_models/LSTM4"
   epochs: 100
-  embed_size: 256
-  hidden_size: 128
+  embed_size: 512
+  hidden_size: 256
   num_layes: 5
   droput: 0.5
   tokenizer: "nltk"
   batch_size: 32
-  leaning_rate: 0.0019
-  momentum: 0.
+  leaning_rate: 0.001
+  momentum: 0.9
+

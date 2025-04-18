@@ -7,7 +7,7 @@ load_dotenv()
 
 # Initialize the OpenAI client with base URL and API key from environment variables
 client = OpenAI(
-    base_url="https://openrouter.ai/api/v1",
+    base_url=os.getenv('OPENAI'),
     api_key=os.getenv('SECRET_KEY'),
 )
 
@@ -71,6 +71,8 @@ def humanize(question: str, answer: list[str], distance: list[int]) -> str:
                         "Tugas Anda adalah menjawab pertanyaan dalam Bahasa Indonesia, dengan gaya seperti teman bicara. "
                         "Meskipun sebagian besar pertanyaan mungkin tidak berkaitan langsung dengan Nawatech, "
                         "tetaplah menjawab dengan sopan dan informatif. "
+                        "Kalau tidak ada hubungannya dengan nawatech jawab singkat aja tapi sopan"
+                        "contoh: Apa ibukota Indonesia? Ibukota Indonesia adalah Jakarta"
                         "Di akhir setiap jawaban, ajak secara halus pengguna untuk bertanya seputar Nawatech, "
                         "tanpa terdengar memaksa atau terlalu formal. "
                         "Contoh ajakan: 'Ngomong-ngomong, penasaran nggak sih soal Nawatech? 😊'"
