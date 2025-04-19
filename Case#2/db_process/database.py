@@ -1,37 +1,28 @@
 import pandas as pd
 # Import dari llama_index
-from llama_index.core import VectorStoreIndex, SimpleDirectoryReader, StorageContext, Settings
-from llama_index.embeddings.huggingface import HuggingFaceEmbedding
-from llama_index.vector_stores.chroma import ChromaVectorStore
-from llama_index.llms.huggingface import HuggingFaceLLM
-
-# Import dari transformers
-from transformers import AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig
-
 # Import dari modul lain
 import chromadb
-from IPython.display import Markdown, display
-import torch
+
 
 from util import get_embeddings
 from LLM.model import humanize, define_paragraph
 
 
-def split_into_batches(data_list, batch_size=5):
+def split_into_batches(data_list: list[str], batch_size: int = 5) -> list[list[str]]:
     """
     Split a list into smaller batches of a given size.
 
     Args:
-        data_list (list): The list to be split.
+        data_list (list[str]): The list to be split.
         batch_size (int): The size of each batch.
 
     Returns:
-        list: A list of batches, where each batch is a list.
+        list[list[str]]: A list of batches, where each batch is a list of strings.
     """
     return [data_list[i:i + batch_size] for i in range(0, len(data_list), batch_size)]
 
 
-def save_to_database(file_path, db_path, collection_name, LLM_process = False):
+def save_to_database(file_path:str, db_path:str, collection_name:str, LLM_process:bool = False):
     """
     Save data from a CSV file into a ChromaDB database.
 
@@ -88,7 +79,7 @@ def save_to_database(file_path, db_path, collection_name, LLM_process = False):
     print("All data has been successfully inserted into the database.")
 
 
-def query_database(db_path, collection_name, query):
+def query_database(db_path:str, collection_name:str, query:str):
     """
     Query the ChromaDB database for a specific question.
 

@@ -1,0 +1,6 @@
+streamlit
+transformers
+chromadb
+python-dotenv
+torch
+openai

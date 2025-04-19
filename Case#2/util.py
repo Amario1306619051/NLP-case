@@ -10,10 +10,23 @@ def mean_pooling(model_output, attention_mask):
 
 # Load model from HuggingFace Hub
 tokenizer = AutoTokenizer.from_pretrained('LazarusNLP/all-nusabert-large-v4')
-model = AutoModel.from_pretrained('LazarusNLP/all-nusabert-large-v4')
+model = AutoModel.from_pretrained('LazarusNLP/all-nusabert-large-v4').to('cpu')
 
 
 def get_embeddings(sentences):
+    """
+    Generate sentence embeddings for a list of sentences using a pretrained model.
+
+    This function tokenizes input sentences, computes token embeddings through the model,
+    and then applies mean pooling to produce a single embedding per sentence.
+
+    Args:
+        sentences (list[str]): A list of sentences to be embedded.
+
+    Returns:
+        torch.Tensor: A tensor containing the sentence embeddings, where each row corresponds 
+        to the embedding of a sentence.
+    """
     # Tokenize sentences
     encoded_input = tokenizer(sentences, padding=True, truncation=True, return_tensors='pt')
 

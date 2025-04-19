@@ -1,25 +1,24 @@
-dataset: /home/rnd/Downloads/dataset_tweet_sentiment_cellular_service_provider.csv
+dataset: /home/rnd/Downloads/dataset_tweet_sentiment_cellular_service_provider.csv   # Path to the dataset file (CSV format)
 split:
-  test_size: 0.2
-  stratify: false
+  test_size: 0.2     # Fraction of the dataset reserved for testing
+  stratify: false    # If true, use stratified sampling to maintain label distribution
 preprocess:
-  remove_special_char: true
-  remove_stopwords: true
-  apply_steaming: true
-  remove_URL: true
-  numbers: false
-  sysmbols: true
-  save_csv: true
+  remove_special_char: true   # Remove special characters from text
+  remove_stopwords: true        # Eliminate stopwords from text
+  apply_steaming: true          # Apply stemming to words (note: likely meant as 'apply_stemming')
+  remove_URL: true              # Remove URLs from text
+  numbers: false                # If false, remove numbers from the text; if true, keep them
+  sysmbols: true                # Handle symbols (note: 'sysmbols' might be a typo for 'symbols')
+  save_csv: true                # Save the preprocessed data into a CSV file
 training_params:
-  optimizer: "adam"
-  model_path: "/home/rnd/Documents/Belajar/DL_models/LSTMCNN4"
-  epochs: 100
-  embed_size: 512
-  hidden_size: 256
-  num_layes: 2
-  droput: 0.5
-  tokenizer: "nltk"
-  batch_size: 32
-  leaning_rate: 0.001
-  momentum: 0.9
-
+  optimizer: "adam"                      # Name of the optimizer to use (e.g., "adam")
+  model_path: "/home/rnd/Documents/Belajar/DL_models/LSTMCNN4"  # Path to save or load the trained model
+  epochs: 100                            # Number of training epochs
+  embed_size: 512                        # Size of the embedding layer (dimension of word vectors)
+  hidden_size: 256                       # Number of hidden units in the hidden layers
+  num_layes: 2                           # Number of layers in the model (note: 'num_layes' may be a typo for 'num_layers')
+  droput: 0.5                            # Dropout rate for regularization to prevent overfitting (should be between 0 and 1)
+  tokenizer: "nltk"                      # Tokenizer to use for text processing (e.g., "nltk")
+  batch_size: 32                         # Batch size for training iterations
+  leaning_rate: 0.001                    # Learning rate for the optimizer (note: 'leaning_rate' might be a typo for 'learning_rate')
+  momentum: 0.9                          # Momentum parameter for optimizers that support momentum

@@ -3,7 +3,16 @@ from db_process.database import query_database
 from LLM.model import humanize
 import os
 
-def get_answer(question: str):
+def get_answer(question: str) -> str:
+    """
+    Retrieve an answer to the given question by querying the database and processing the results.
+
+    Args:
+        question (str): The user's question.
+
+    Returns:
+        str: The final processed answer.
+    """
     # Query the database
     result = query_database(
         db_path=os.getenv('DB_PATH'),  # Path to the database
