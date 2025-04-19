@@ -12,11 +12,11 @@ preprocess:
   save_csv: true
 training_params:
   optimizer: "adam"
-  model_path: "DL_models/LSTM4"
+  model_path: "/home/rnd/Documents/Belajar/DL_models/LSTMCNN4"
   epochs: 100
   embed_size: 512
   hidden_size: 256
-  num_layes: 5
+  num_layes: 2
   droput: 0.5
   tokenizer: "nltk"
   batch_size: 32
